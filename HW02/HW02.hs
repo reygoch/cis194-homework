@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wall #-}
 module HW02 where
-
+-- import Data.List (sort)
 -- Mastermind -----------------------------------------
 
 -- A peg can be one of six colors
@@ -23,17 +23,20 @@ colors = [Red, Green, Blue, Yellow, Orange, Purple]
 
 -- Get the number of exact matches between the actual code and the guess
 exactMatches :: Code -> Code -> Int
-exactMatches = undefined
+exactMatches code guess = length $ filter (uncurry (==)) $ zip code guess
 
 -- Exercise 2 -----------------------------------------
 
--- For each peg in xs, count how many times is occurs in ys
+-- For each peg in xs, count how many times it occurs in ys
 countColors :: Code -> [Int]
-countColors = undefined
+countColors code = map count colors
+  where
+    count :: Peg -> Int
+    count color = length $ filter (==color) code
 
 -- Count number of matches between the actual code and the guess
 matches :: Code -> Code -> Int
-matches = undefined
+matches code guess = sum $ zipWith min (countColors code) (countColors guess)
 
 -- Exercise 3 -----------------------------------------
 
