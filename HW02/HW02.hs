@@ -42,27 +42,38 @@ matches code guess = sum $ zipWith min (countColors code) (countColors guess)
 
 -- Construct a Move from a guess given the actual code
 getMove :: Code -> Code -> Move
-getMove = undefined
+getMove code guess = Move guess exact (matches code guess - exact)
+  where
+    exact :: Int
+    exact = exactMatches code guess
 
 -- Exercise 4 -----------------------------------------
 
 isConsistent :: Move -> Code -> Bool
-isConsistent = undefined
+isConsistent move@(Move guess _ _) code = move == getMove code guess
 
 -- Exercise 5 -----------------------------------------
 
 filterCodes :: Move -> [Code] -> [Code]
-filterCodes = undefined
+filterCodes move codes = filter (isConsistent move) codes
 
 -- Exercise 6 -----------------------------------------
-
+-- Much simpler to do in mathematical set notation, aka list comprehension
 allCodes :: Int -> [Code]
-allCodes = undefined
+allCodes 0 = [[]]
+allCodes len = [x:xs | x <- colors, xs <- allCodes (len - 1)]
 
 -- Exercise 7 -----------------------------------------
 
 solve :: Code -> [Move]
-solve = undefined
+solve code = guesses $ allCodes $ length code
+  where
+    guesses :: [Code] -> [Move]
+    guesses [] = []
+    guesses [_] = []
+    guesses codes@(guess:_) = move : (guesses $ filterCodes move codes)
+      where move = getMove code guess
+
 
 -- Bonus ----------------------------------------------
 
