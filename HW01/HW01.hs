@@ -43,5 +43,8 @@ luhn = (==0) . flip mod 10 . sumDigits . doubleEveryOther . toRevDigits
 type Peg = String
 type Move = (Peg, Peg)
 
+-- Hanoi is just a function that moves items from a to c using b
+-- as temporary "stack"
 hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
-hanoi = undefined
+hanoi 0 _ _ _ = []
+hanoi n a b c = hanoi (n - 1) a c b ++ [(a, c)] ++ hanoi (n - 1) b a c
