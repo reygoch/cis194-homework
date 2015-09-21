@@ -29,14 +29,13 @@ doubleEveryOther (x:y:ys) = x : y * 2 : doubleEveryOther ys
 
 -- Calculate the sum of all the digits in every Integer.
 sumDigits :: [Integer] -> Integer
-sumDigits = undefined
-
+sumDigits = sum . map (sum . toRevDigits)
 
 -- Exercise 5 -----------------------------------------
 
 -- Validate a credit card number using the above functions.
 luhn :: Integer -> Bool
-luhn = undefined
+luhn = (==0) . flip mod 10 . sumDigits . doubleEveryOther . toRevDigits
 
 -- Exercise 6 -----------------------------------------
 
