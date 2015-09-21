@@ -21,7 +21,9 @@ toRevDigits d = lastDigit d : (toRevDigits . dropLastDigit) d
 
 -- Double every second number in a list starting on the left.
 doubleEveryOther :: [Integer] -> [Integer]
-doubleEveryOther = undefined
+doubleEveryOther [] = []
+doubleEveryOther [x] = [x]
+doubleEveryOther (x:y:ys) = x : y * 2 : doubleEveryOther ys
 
 -- Exercise 4 -----------------------------------------
 
