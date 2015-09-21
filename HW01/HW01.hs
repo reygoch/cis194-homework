@@ -5,16 +5,17 @@ module HW01 where
 
 -- Get the last digit from a number
 lastDigit :: Integer -> Integer
-lastDigit = undefined
+lastDigit = flip mod 10
 
 -- Drop the last digit from a number
 dropLastDigit :: Integer -> Integer
-dropLastDigit = undefined
+dropLastDigit = flip div 10
 
 -- Exercise 2 -----------------------------------------
 
 toRevDigits :: Integer -> [Integer]
-toRevDigits = undefined
+toRevDigits 0 = []
+toRevDigits d = lastDigit d : (toRevDigits . dropLastDigit) d
 
 -- Exercise 3 -----------------------------------------
 
