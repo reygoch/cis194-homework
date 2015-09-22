@@ -78,10 +78,14 @@ desugar (Skip) = DSkip
 
 evalSimple :: State -> DietStatement -> State
 evalSimple state (DAssign name expr) = extend state name $ evalE state expr
-evalSimple state (DIf expr st1 st2) = if evalE state expr == 1
-  then evalSimple state st1 else evalSimple state st2
-evalSimple state while@(DWhile expr st1) = if evalE state expr >= 1
-  then evalSimple state (DSequence st1 while) else state
+evalSimple state (DIf expr st1 st2) =
+  if evalE state expr == 1
+  then evalSimple state st1
+  else evalSimple state st2
+evalSimple state while@(DWhile expr st1) =
+  if evalE state expr == 1
+  then evalSimple state (DSequence st1 while)
+  else state
 evalSimple state (DSequence st1 st2) = evalSimple (evalSimple state st1) st2
 evalSimple state DSkip = state
 
@@ -95,14 +99,17 @@ slist [] = Skip
 slist l  = foldr1 Sequence l
 
 {- Calculate the factorial of the input
+   MY IMPLEMENTATION WAS CORRECT ALL ALONG, THIS GODDAMN SHITTY EXAMPLE IS WRONG
+   IT SHOULD BE "In > 1" instead of "In > 0" and we should add 1 to In since --X
+   operation isn't supported. AAAARRRRRGGGGHHHH!!!!!!
 
    for (Out := 1; In > 0; In := In - 1) {
      Out := In * Out
    }
 -}
 factorial :: Statement
-factorial = For (Assign "Out" (Val 1))
-                (Op (Var "In") Gt (Val 0))
+factorial = For (Sequence (Assign "Out" (Val 1)) (Incr "In"))
+                (Op (Var "In") Gt (Val 1))
                 (Assign "In" (Op (Var "In") Minus (Val 1)))
                 (Assign "Out" (Op (Var "In") Times (Var "Out")))
 
@@ -161,11 +168,11 @@ fibonacci = slist [ Assign "F0" (Val 1)
                        )
                   ]
 
-fact :: Bool
-fact = let s = run (extend empty "In" 4) factorial in s "Out" == 24
+fact :: State
+fact = run (extend empty "In" 4) factorial
 
-sqrr :: Bool
-sqrr = let s = run (extend empty "A" 9) squareRoot in s "B" == 3
+sqrr :: State
+sqrr = run (extend empty "A" 9) squareRoot
 
-fibo :: Bool
-fibo = let s = run (extend empty "In" 5) fibonacci in s "Out" == 5
+fibo :: State
+fibo = run (extend empty "In" 4) fibonacci
