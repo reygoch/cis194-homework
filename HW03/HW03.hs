@@ -7,16 +7,7 @@ data Expression =
   deriving (Show, Eq)
 
 -- Binary (2-input) operators
-data Bop = 
-    Plus     
-  | Minus    
-  | Times    
-  | Divide   
-  | Gt
-  | Ge       
-  | Lt  
-  | Le
-  | Eql
+data Bop = Plus | Minus | Times | Divide | Gt | Ge | Lt | Le | Eql
   deriving (Show, Eq)
 
 data Statement =
@@ -37,8 +28,9 @@ extend :: State -> String -> Int -> State
 extend state var val = state'
   where
     state' :: State
-    state' key | key == var = val
-    state' key = state key
+    state' key
+      | key == var = val
+      | otherwise = state key
 
 empty :: State
 empty _ = 0
@@ -52,8 +44,10 @@ evalE state (Var name) = state name
 -- Binary operators
 evalE state (Op exp1 Plus exp2) = evalE state exp1 + evalE state exp2
 evalE state (Op exp1 Minus exp2) = evalE state exp1 - evalE state exp2
+
 evalE state (Op exp1 Times exp2) = evalE state exp1 * evalE state exp2
 evalE state (Op exp1 Divide exp2) = evalE state exp1 `div` evalE state exp2
+-- Comparison
 evalE state (Op exp1 Gt exp2) = if evalE state exp1 > evalE state exp2 then 1 else 0
 evalE state (Op exp1 Ge exp2) = if evalE state exp1 >= evalE state exp2 then 1 else 0
 evalE state (Op exp1 Lt exp2) = if evalE state exp1 < evalE state exp2 then 1 else 0
@@ -62,29 +56,37 @@ evalE state (Op exp1 Eql exp2) = if evalE state exp1 == evalE state exp2 then 1 
 
 -- Exercise 3 -----------------------------------------
 
-data DietStatement = DAssign String Expression
-                   | DIf Expression DietStatement DietStatement
-                   | DWhile Expression DietStatement
-                   | DSequence DietStatement DietStatement
-                   | DSkip
-                     deriving (Show, Eq)
+data DietStatement =
+    DAssign String Expression
+  | DIf Expression DietStatement DietStatement
+  | DWhile Expression DietStatement
+  | DSequence DietStatement DietStatement
+  | DSkip
+  deriving (Show, Eq)
 
 desugar :: Statement -> DietStatement
-desugar (Assign str expr) = DAssign str expr
-desugar (Incr str) = DAssign str (Op (Var str) Plus (Val 1))
+desugar (Assign var expr) = DAssign var expr
+desugar (Incr var) = DAssign var (Op (Var var) Plus (Val 1))
 desugar (If expr st1 st2) = DIf expr (desugar st1) (desugar st2)
-desugar (While expr st) = DWhile expr (desugar st)
-desugar (For st0 expr st1 st2) = DWhile expr $ desugar $ Sequence st0 $ Sequence st1 st2
+desugar (While expr st1) = DWhile expr (desugar st1)
+desugar (For st0 expr st1 st2) = desugar $ Sequence st0 $ While expr $ Sequence st1 st2
+-- DWhile expr $ desugar $ Sequence st0 $ Sequence st1 st2
 desugar (Sequence st1 st2) = DSequence (desugar st1) (desugar st2)
 desugar (Skip) = DSkip
 
 -- Exercise 4 -----------------------------------------
 
 evalSimple :: State -> DietStatement -> State
-evalSimple = undefined
+evalSimple state (DAssign name expr) = extend state name $ evalE state expr
+evalSimple state (DIf expr st1 st2) = if evalE state expr == 1
+  then evalSimple state st1 else evalSimple state st2
+evalSimple state while@(DWhile expr st1) = if evalE state expr >= 1
+  then evalSimple state (DSequence st1 while) else state
+evalSimple state (DSequence st1 st2) = evalSimple (evalSimple state st1) st2
+evalSimple state DSkip = state
 
 run :: State -> Statement -> State
-run = undefined
+run state statement = evalSimple state $ desugar statement
 
 -- Programs -------------------------------------------
 
@@ -158,3 +160,12 @@ fibonacci = slist [ Assign "F0" (Val 1)
                            )
                        )
                   ]
+
+fact :: Bool
+fact = let s = run (extend empty "In" 4) factorial in s "Out" == 24
+
+sqrr :: Bool
+sqrr = let s = run (extend empty "A" 9) squareRoot in s "B" == 3
+
+fibo :: Bool
+fibo = let s = run (extend empty "In" 5) fibonacci in s "Out" == 5
