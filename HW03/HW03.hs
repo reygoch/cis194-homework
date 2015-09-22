@@ -32,12 +32,16 @@ data Statement =
 type State = String -> Int
 
 -- Exercise 1 -----------------------------------------
-
+-- This is really cool trick for simulating variables with functions
 extend :: State -> String -> Int -> State
-extend = undefined
+extend state var val = state'
+  where
+    state' :: State
+    state' key | key == var = val
+    state' key = state key
 
 empty :: State
-empty = undefined
+empty _ = 0
 
 -- Exercise 2 -----------------------------------------
 
