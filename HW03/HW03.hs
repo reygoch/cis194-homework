@@ -46,7 +46,19 @@ empty _ = 0
 -- Exercise 2 -----------------------------------------
 
 evalE :: State -> Expression -> Int
-evalE = undefined
+-- Simple stuff
+evalE _ (Val num) = num
+evalE state (Var name) = state name
+-- Binary operators
+evalE state (Op exp1 Plus exp2) = evalE state exp1 + evalE state exp2
+evalE state (Op exp1 Minus exp2) = evalE state exp1 - evalE state exp2
+evalE state (Op exp1 Times exp2) = evalE state exp1 * evalE state exp2
+evalE state (Op exp1 Divide exp2) = evalE state exp1 `div` evalE state exp2
+evalE state (Op exp1 Gt exp2) = if evalE state exp1 > evalE state exp2 then 1 else 0
+evalE state (Op exp1 Ge exp2) = if evalE state exp1 >= evalE state exp2 then 1 else 0
+evalE state (Op exp1 Lt exp2) = if evalE state exp1 < evalE state exp2 then 1 else 0
+evalE state (Op exp1 Le exp2) = if evalE state exp1 <= evalE state exp2 then 1 else 0
+evalE state (Op exp1 Eql exp2) = if evalE state exp1 == evalE state exp2 then 1 else 0
 
 -- Exercise 3 -----------------------------------------
 
@@ -58,8 +70,13 @@ data DietStatement = DAssign String Expression
                      deriving (Show, Eq)
 
 desugar :: Statement -> DietStatement
-desugar = undefined
-
+desugar (Assign str expr) = DAssign str expr
+desugar (Incr str) = DAssign str (Op (Var str) Plus (Val 1))
+desugar (If expr st1 st2) = DIf expr (desugar st1) (desugar st2)
+desugar (While expr st) = DWhile expr (desugar st)
+desugar (For st0 expr st1 st2) = DWhile expr $ desugar $ Sequence st0 $ Sequence st1 st2
+desugar (Sequence st1 st2) = DSequence (desugar st1) (desugar st2)
+desugar (Skip) = DSkip
 
 -- Exercise 4 -----------------------------------------
 
