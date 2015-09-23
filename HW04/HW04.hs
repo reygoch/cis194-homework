@@ -11,8 +11,11 @@ x = P [0,1]
 -- Exercise 2 ----------------------------------------
 
 instance (Num a, Eq a) => Eq (Poly a) where
-    (==) = undefined
- 
+    (==) (P a) (P b) = clean a == clean b
+        where
+            clean :: (Num a, Eq a) => [a] -> [a]
+            clean = reverse . dropWhile (==0) . reverse
+
 -- Exercise 3 -----------------------------------------
 
 instance (Num a, Eq a, Show a) => Show (Poly a) where
