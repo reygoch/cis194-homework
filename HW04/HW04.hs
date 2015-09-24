@@ -37,7 +37,13 @@ instance (Num a, Eq a, Show a) => Show (Poly a) where
 -- Exercise 4 -----------------------------------------
 
 plus :: Num a => Poly a -> Poly a -> Poly a
-plus = undefined
+plus (P a) (P b) = P $ sumup a b
+    where
+        sumup :: Num a => [a] -> [a] -> [a]
+        sumup [] [] = []
+        sumup [] lb = lb
+        sumup la [] = la
+        sumup (la:las) (lb:lbs) = la + lb : sumup las lbs
 
 -- Exercise 5 -----------------------------------------
 
