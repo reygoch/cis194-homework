@@ -17,9 +17,21 @@ instance (Num a, Eq a) => Eq (Poly a) where
             clean = reverse . dropWhile (==0) . reverse
 
 -- Exercise 3 -----------------------------------------
-
+-- x^3 + 2x^2 + 1
 instance (Num a, Eq a, Show a) => Show (Poly a) where
-    show = undefined
+    show (P p) = creator 0 p
+        where
+            creator :: (Num a, Eq a, Show a) => Int -> [a] -> String
+            creator _ [] = ""
+            creator e [c] = part e c
+            creator e (0:cs) = creator (e+1) cs
+            creator e (c:cs) = creator (e+1) cs ++ " + " ++ part e c
+
+            part :: (Num a, Eq a, Show a) => Int -> a -> String
+            part 0 c = show c
+            part e 1 = "x^" ++ show e
+            part 1 c = show c ++ "x"
+            part e c = show c ++ "x^" ++ show e
 
 -- Exercise 4 -----------------------------------------
 
