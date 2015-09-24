@@ -30,6 +30,7 @@ instance (Num a, Eq a, Show a) => Show (Poly a) where
             part :: (Num a, Eq a, Show a) => Int -> a -> String
             part 0 c = show c
             part e 1 = "x^" ++ show e
+            part e (-1) = "-x^" ++ show e
             part 1 c = show c ++ "x"
             part e c = show c ++ "x^" ++ show e
 
