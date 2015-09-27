@@ -79,12 +79,19 @@ applyP (P p) n = helper 0 n p
 class Num a => Differentiable a where
     deriv  :: a -> a
     nderiv :: Int -> a -> a
-    nderiv = undefined
+    nderiv 1 a = deriv a 
+    nderiv n a = nderiv (n - 1) $ deriv a 
 
 -- Exercise 9 -----------------------------------------
 
 instance Num a => Differentiable (Poly a) where
-    deriv = undefined
+    deriv (P []) = P [0]
+    deriv (P (_:as)) = P $ helper 1 as
+        where
+            helper :: Num a => Int -> [a] -> [a]
+            helper _ [] = [0]
+            helper e [i] = [i * fromIntegral e]
+            helper e (i:is) = (i * fromIntegral e) : helper (e + 1) is
 
 -- Utilities ------------------------------------------
 clean :: (Eq a, Num a) => [a] -> [a]
