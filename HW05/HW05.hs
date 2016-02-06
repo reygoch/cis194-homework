@@ -5,6 +5,7 @@ module HW05 where
 import Data.ByteString.Lazy (ByteString)
 import Data.Map.Strict (Map)
 import System.Environment (getArgs)
+import Data.Bits
 
 import qualified Data.ByteString.Lazy as BS
 import qualified Data.Map.Strict as Map
@@ -14,22 +15,30 @@ import Parser
 -- Exercise 1 -----------------------------------------
 
 getSecret :: FilePath -> FilePath -> IO ByteString
-getSecret = undefined
+getSecret fp1 fp2 = do
+  clue1 <- BS.readFile fp1
+  clue2 <- BS.readFile fp2
+  return $ BS.filter (/=0) $ BS.pack $ BS.zipWith xor clue1 clue2
 
 -- Exercise 2 -----------------------------------------
 
 decryptWithKey :: ByteString -> FilePath -> IO ()
-decryptWithKey = undefined
+decryptWithKey s fp = do
+  enc <- BS.readFile $ fp ++ ".enc"
+  BS.writeFile fp $ BS.pack $ BS.zipWith xor (BS.cycle s) enc
 
 -- Exercise 3 -----------------------------------------
 
 parseFile :: FromJSON a => FilePath -> IO (Maybe a)
-parseFile = undefined
+parseFile fp = do
+  file <- BS.readFile fp
+  return $ decode file
 
 -- Exercise 4 -----------------------------------------
 
 getBadTs :: FilePath -> FilePath -> IO (Maybe [Transaction])
-getBadTs = undefined
+getBadTs fp1 fp2 = do
+  
 
 -- Exercise 5 -----------------------------------------
 

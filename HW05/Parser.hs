@@ -1,11 +1,12 @@
 {-# LANGUAGE RecordWildCards, OverloadedStrings #-}
-module Parser ( encode
-              , decode
-              , Transaction(..)
-              , TId
-              , FromJSON(..)
-              , ToJSON(..)
-              ) where
+module Parser
+  ( encode
+  , decode
+  , Transaction(..)
+  , TId
+  , FromJSON(..)
+  , ToJSON(..)
+  ) where
 
 import Data.Aeson
 import Data.Monoid
