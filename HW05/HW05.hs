@@ -42,8 +42,8 @@ getBadTs fp1 fp2 = do
   f2 <- decode <$> BS.readFile fp2
   return $ filterer <$> f1 <*> f2
   where
-    filterer :: Eq a => [a] -> [a] -> [a]
-    filterer a = filter (`elem` a)
+    filterer :: [TId] -> [Transaction] -> [Transaction]
+    filterer a = filter ((`elem` a) . tid)
 
 -- Exercise 5 -----------------------------------------
 
@@ -115,11 +115,11 @@ main = do
     case args of
       dog1:dog2:trans:vict:ids:out:_ ->
           doEverything dog1 dog2 trans vict ids out
-      _ -> doEverything "dog-original.jpg"
-                        "dog.jpg"
-                        "transactions.json"
-                        "victims.json"
-                        "new-ids.json"
-                        "new-transactions.json"
+      _ -> doEverything "clues/dog-original.jpg"
+                        "clues/dog.jpg"
+                        "clues/transactions.json"
+                        "clues/victims.json"
+                        "clues/new-ids.json"
+                        "clues/new-transactions.json"
   putStrLn crim
 
