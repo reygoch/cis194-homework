@@ -57,10 +57,10 @@ sTake n (Cons v s) = v : sTake (n - 1) s
 -- Exercise 6 -----------------------------------------
 
 nats :: Stream Integer
-nats = undefined
+nats = sIterate (+1) 0
 
 ruler :: Stream Integer
-ruler = undefined
+ruler = sRepeat 0 `sInterleave` (sRepeat 1 `sInterleave` (sRepeat 2 `sInterleave` (sRepeat 3 `sInterleave` (sRepeat 4))))
 
 -- Exercise 7 -----------------------------------------
 
