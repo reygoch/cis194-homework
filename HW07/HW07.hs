@@ -129,10 +129,10 @@ getCards :: Int -> Deck -> Maybe ([Card], Deck)
 getCards n = helper 0 []
   where
     helper :: Int -> [Card] -> Deck -> Maybe ([Card], Deck)
-    helper 0 cs dick = return (cs, dick)
+    helper i cs dick | i == n = return (cs, dick)
     helper i cs dick = do
       (c, d) <- nextCard dick
-      helper (n + 1) (c:cs) d
+      helper (i + 1) (c:cs) d
 
 -- Exercise 13 ----------------------------------------
 
