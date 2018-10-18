@@ -79,6 +79,7 @@ applyP (P p) n = helper 0 n p
 class Num a => Differentiable a where
     deriv  :: a -> a
     nderiv :: Int -> a -> a
+    nderiv 0 a = a 
     nderiv 1 a = deriv a 
     nderiv n a = nderiv (n - 1) $ deriv a 
 
